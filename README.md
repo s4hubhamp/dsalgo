@@ -1,1 +1,1 @@
-Me Learning with data structures and Algorithms
+Me Learning data structures and Algorithms
