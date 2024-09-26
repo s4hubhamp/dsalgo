@@ -23,7 +23,7 @@ tree *find_minimum(tree *t);
 tree *find_maximum(tree *t);
 void traverse_tree(tree *l, traversal_type type);
 tree *insert_tree(tree **l, int x, tree *parent);
-int height(tree *);
+int max_depth(tree *);
 void process_current_level(tree *, int);
 void delete_tree(tree **t, tree *d);
 bool is_valid_bst(tree *t, tree *p);
@@ -178,9 +178,9 @@ void traverse_tree(tree *t, traversal_type type)
     }
     else
     {
-        int h = height(t);
+        int d = max_depth(t);
 
-        for (int i = 1; i <= h; i++)
+        for (int i = 1; i <= d; i++)
         {
             process_current_level(t, i);
             printf("\n");
@@ -207,16 +207,16 @@ void process_current_level(tree *t, int l)
     }
 }
 
-int height(tree *t)
+int max_depth(tree *t)
 {
     if (t == NULL)
     {
         return 0;
     }
 
-    int lheight = height(t->left);
-    int rheight = height(t->right);
-    return lheight > rheight ? lheight + 1 : rheight + 1;
+    int ldepth = max_depth(t->left);
+    int rdepth = max_depth(t->right);
+    return (ldepth > rdepth ? ldepth : rdepth) + 1;
 }
 
 void delete_tree(tree **t, tree *d)
