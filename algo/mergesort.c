@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int *sort(int[], int);
-int *slice(int array[], int start, int end);
-int *merge(int a[], int na, int b[], int nb);
+int *sort(int[], int, int);
+void merge(int[], int, int, int);
 void print_array(int[], int);
 
 int main()
@@ -13,67 +12,52 @@ int main()
     printf("Original array: ");
     print_array(array, n);
 
-    int *sorted = sort(array, n);
+    sort(array, 0, 7);
 
-    printf("Sorted array: ");
-    print_array(sorted, n);
+    printf("After Sorting: ");
+    print_array(array, n);
 
     return 0;
 }
 
-int *sort(int array[], int n)
+int *sort(int array[], int start, int end)
 {
-    if (n == 1)
+    if (end - start == 0)
     {
         return array;
     }
 
-    int lefthalf[] = {0, (int)(n / 2)};
-    int righthalf[] = {(int)(n / 2), n};
-
-    int *sortedleft = sort(slice(array, lefthalf[0], lefthalf[1]), lefthalf[1] - lefthalf[0]);
-    int *sortedright = sort(slice(array, righthalf[0], righthalf[1]), righthalf[1] - righthalf[0]);
-
-    return sortedright[0] > sortedleft[0]
-               ? merge(sortedright, righthalf[1] - righthalf[0], sortedleft, lefthalf[1] - lefthalf[0])
-               : merge(sortedleft, lefthalf[1] - lefthalf[0], sortedright, righthalf[1] - righthalf[0]);
+    int mid = start + (int) ((end - start ) / 2);
+    sort(array, start, mid);
+    sort(array, mid + 1, end);
+    merge(array, start, mid, end);
 }
 
-int *merge(int a[], int na, int b[], int nb)
+void merge(int array[], int start, int mid, int end)
 {
-    int *result = malloc(sizeof(int) * (na + nb));
-    int i = 0, j = 0, k = 0;
+  int start2 = mid + 1;
 
-    while (i < na && j < nb)
-    {
-        if (a[i] > b[j])
-        {
-            result[k++] = a[i++];
-        }
-        else
-        {
-            result[k++] = b[j++];
-        }
+  // exit early
+  if (array[mid] >= array[start2]) {
+    return;
+  }
+
+  while (start <= mid && start2 <= end) {
+    if (array[start] >= array[start2]) {
+      start++;
+    } else {
+      int placeAtStart = array[start2];
+      // shift the elements from start + 1 --> start2 - 1 to, start + 2 --> start2
+      for (int i = start2; i > start; i--) {
+        array[i] = array[i - 1];
+      }
+      array[start] = placeAtStart;
+
+      start++;
+      mid++;
+      start2++;
     }
-
-    while (i < na)
-        result[k++] = a[i++];
-    while (j < nb)
-        result[k++] = b[j++];
-
-    return result;
-}
-
-int *slice(int array[], int start, int end)
-{
-    int *sliced_arr = malloc(sizeof(int) * (end - start));
-    int j = -1;
-    for (int i = start; i < end; i++)
-    {
-        sliced_arr[++j] = array[i];
-    }
-
-    return sliced_arr;
+  }
 }
 
 void print_array(int array[], int n)
